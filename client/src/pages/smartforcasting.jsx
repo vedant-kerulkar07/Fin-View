@@ -9,7 +9,7 @@ const SmartForecasting = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-4 text-center">
         <p>No user data available. Please complete your Account Setup first.</p>
       </div>
     );
@@ -26,49 +26,62 @@ const SmartForecasting = () => {
     "Entertainment";
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white px-10 py-20">
-      <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen bg-[#0f172a] text-white px-4 sm:px-6 md:px-10 py-10 sm:py-16">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
         <button
           onClick={() => navigate("/dashboard/analytics")}
-          className="text-gray-400 hover:text-white"
+          className="text-gray-400 hover:text-white text-sm sm:text-base"
         >
           ← Back
         </button>
-        <h2 className="text-2xl font-semibold">Smart Forecasting</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold">Smart Forecasting</h2>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-10">
-        <div className="bg-[#1e293b] p-6 rounded-2xl">
+      {/* Forecast Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="bg-[#1e293b] p-5 sm:p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="text-green-400" />
-            <p className="text-gray-400">Next Month Predicted Spend</p>
+            <TrendingUp className="text-green-400" size={20} />
+            <p className="text-gray-400 text-sm sm:text-base">
+              Next Month Predicted Spend
+            </p>
           </div>
-          <h3 className="text-xl font-bold text-green-400">
+          <h3 className="text-lg sm:text-xl font-bold text-green-400">
             ₹{predictedSpend.toFixed(0)}
           </h3>
         </div>
 
-        <div className="bg-[#1e293b] p-6 rounded-2xl">
+        <div className="bg-[#1e293b] p-5 sm:p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle className="text-red-400" />
-            <p className="text-gray-400">Risk Category Alert</p>
+            <AlertTriangle className="text-red-400" size={20} />
+            <p className="text-gray-400 text-sm sm:text-base">
+              Risk Category Alert
+            </p>
           </div>
-          <h3 className="text-xl font-bold text-red-400">{riskCategory}</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-red-400">
+            {riskCategory}
+          </h3>
         </div>
 
-        <div className="bg-[#1e293b] p-6 rounded-2xl">
+        <div className="bg-[#1e293b] p-5 sm:p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-2">
-            <Lightbulb className="text-blue-400" />
-            <p className="text-gray-400">Predicted Savings</p>
+            <Lightbulb className="text-blue-400" size={20} />
+            <p className="text-gray-400 text-sm sm:text-base">
+              Predicted Savings
+            </p>
           </div>
-          <h3 className="text-xl font-bold text-blue-400">
+          <h3 className="text-lg sm:text-xl font-bold text-blue-400">
             ₹{predictedSavings.toFixed(0)}
           </h3>
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold mb-4">Suggestions for you</h3>
-      <div className="grid grid-cols-3 gap-6">
+      {/* Suggestions */}
+      <h3 className="text-base sm:text-lg font-semibold mb-4">
+        Suggestions for you
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           {
             text: `Reduce spending in ${riskCategory} by ₹1000 to stay within your budget.`,
@@ -80,9 +93,14 @@ const SmartForecasting = () => {
             text: `Add ₹500 from ${riskCategory} category to your savings.`,
           },
         ].map((item, i) => (
-          <div key={i} className="bg-[#1e293b] p-6 rounded-2xl">
-            <p className="text-gray-300 mb-3">{item.text}</p>
-            <button className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">
+          <div
+            key={i}
+            className="bg-[#1e293b] p-5 sm:p-6 rounded-2xl flex flex-col justify-between"
+          >
+            <p className="text-gray-300 mb-4 text-sm sm:text-base">
+              {item.text}
+            </p>
+            <button className="bg-teal-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-teal-600 text-sm sm:text-base">
               Apply Suggestion
             </button>
           </div>
