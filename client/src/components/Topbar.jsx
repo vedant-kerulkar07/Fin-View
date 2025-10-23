@@ -60,9 +60,9 @@ const Topbar = () => {
           <Link to="/dashboard">
             <li className="hover:text-white transition">Dashboard</li>
           </Link>
-          {/* <Link >
+          <Link to="/dashboard/transaction">
             <li className="hover:text-white transition">Transactions</li>
-          </Link> */}
+          </Link>
           <Link to="/dashboard/analytics">
             <li className="hover:text-white transition">Analytics</li>
           </Link>
@@ -85,12 +85,12 @@ const Topbar = () => {
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
         <ul className="md:hidden mt-3 flex flex-col space-y-3 text-[#e5e9e9] font-medium bg-[#1e293b] border border-[#475569] rounded-lg shadow-lg p-4">
-          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+          <Link to="/dashboard">
             <li className="hover:text-[#3AAFA9] transition">Dashboard</li>
           </Link>
-          {/* <Link  onClick={() => setMenuOpen(false)}>
+          <Link to="/dashboard/transaction">
             <li className="hover:text-[#3AAFA9] transition">Transactions</li>
-          </Link> */}
+          </Link>
           <Link to="/dashboard/analytics">
             <li className="hover:text-[#3AAFA9] transition">Analytics</li>
           </Link>
