@@ -118,8 +118,8 @@ async function saveBudgetToBackend(budget) {
 
 async function fetchBudgetFromBackend(month, year) {
   try {
-    const res = await fetch(`${getEnv("VITE_API_URL")}/budget/me?month=${month}&year=${year}`, 
-    { credentials: "include" });
+    const res = await fetch(`${getEnv("VITE_API_URL")}/budget/me?month=${month}&year=${year}`,
+      { credentials: "include" });
     const data = await res.json();
     if (!res.ok) return null;
     return data.budget;

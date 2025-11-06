@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 
 const GoogleLogin = () => {
   const [loading, setLoading] = useState(false);
-  const [showProfilePopup, setShowProfilePopup] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { getEnv } from "@/helpers/getEnv";
 
 // ---------------- Validation Schemas ----------------
 const emailSchema = z.object({
@@ -60,8 +61,7 @@ const ForgotPassword = () => {
   const handleSendOtp = async (values) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/forgot-password`,
+      const res = await fetch(`${getEnv("VITE_API_URL")}/auth/forgot-password`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -87,8 +87,7 @@ const ForgotPassword = () => {
   const handleVerifyOtp = async (values) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/verify-otp`,
+      const res = await fetch(`${getEnv("VITE_API_URL")}/auth/verify-otp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -113,8 +112,7 @@ const ForgotPassword = () => {
   const handleResetPassword = async (values) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/reset-password`,
+      const res = await fetch(`${getEnv("VITE_API_URL")}/auth/reset-password`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

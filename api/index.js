@@ -10,14 +10,14 @@ import budgetRoutes from "./routes/budget.routes.js"
 
 dotenv.config()
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT
 const app = express()
 
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
+  origin: process.env.CLIENT_URL,
+  credentials: true,
 }))
 
 // Routes
@@ -25,11 +25,11 @@ app.use('/api/auth', AuthRoute);
 app.use("/api/users", UserRoute);
 app.use("/api/budget", budgetRoutes);
 
-mongoose.connect(process.env.MONGO_URI,{dbName: "Fine-View"})
-.then(() => console.log("✅ Database connected"))
-.catch((err) => {
+mongoose.connect(process.env.MONGO_URI, { dbName: "Fine-View" })
+  .then(() => console.log("✅ Database connected"))
+  .catch((err) => {
     console.error('❌ Database connection failed:', err.message);
-})
+  })
 
 
 
