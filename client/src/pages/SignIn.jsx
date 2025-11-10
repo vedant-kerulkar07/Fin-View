@@ -22,12 +22,11 @@ import { VscGraph } from "react-icons/vsc";
 
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
-  const [showProfilePopup, setShowProfilePopup] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ Form validation schema
+  //  Form validation schema
   const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6, "Password is required"),
@@ -41,7 +40,7 @@ const SignIn = () => {
     },
   });
 
-  // ✅ Handle submit
+  //  Handle submit
   async function onSubmit(values) {
     setLoading(true);
     try {
@@ -58,7 +57,7 @@ const SignIn = () => {
         return showToast("error", data.message);
       }
 
-      // ✅ Save user in Redux
+      //  Save user in Redux
       dispatch(setUser(data.user));
 
       if (data.user.role === "user") {
