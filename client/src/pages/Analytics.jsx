@@ -244,12 +244,12 @@ const Analytics = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className="flex justify-end mt-6">
+      {/* <div className="flex justify-end mt-6">
         <Button className="bg-[#2563EB] hover:bg-[#1D4ED8] px-8 py-2 text-white"
           onClick={()=>navigate("/dashboard/smartforecasting")}>
           Next
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

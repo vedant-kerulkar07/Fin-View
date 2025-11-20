@@ -13,7 +13,7 @@ import LogoutSuccess from './components/LogoutSuccess'
 import NotificationsPage from './Notification/Notification'
 import ProfilePage from './pages/Profile'
 import Analytics from './pages/Analytics'
-import SmartForecasting from './pages/smartforcasting'
+// import SmartForecasting from './pages/smartforcasting'
 import TransactionsPage from './components/Transaction'
 
 const App = () => {
@@ -34,7 +34,7 @@ const App = () => {
         <Route path="/dashboard/notifications" element={<NotificationsPage />} />
         <Route path="/dashboard/profile" element={<ProfilePage />} />
         <Route path="/dashboard/analytics" element={<Analytics />} />
-        <Route path="/dashboard/smartforecasting" element={<SmartForecasting />} />
+        {/* <Route path="/dashboard/smartforecasting" element={<SmartForecasting />} /> */}
         <Route path="/dashboard/transaction" element={<TransactionsPage />} />
       </Route>
     </Routes>
