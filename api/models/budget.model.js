@@ -5,11 +5,11 @@ const categorySchema = new mongoose.Schema({
   key: {
     type: String,
     required: true
-  },       // unique identifier (e.g. "needs", "wants", "savings", "rent")
+  },       
   name: {
     type: String,
     required: true
-  },      // human-readable name
+  },    
   pct: {
     type: Number,
     required: true
@@ -17,8 +17,8 @@ const categorySchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true
-  },    // calculated amount
-  type: {                                      // distinguishes default vs user-created
+  },    
+  type: {                                      
     type: String,
     enum: ["default", "custom"],
     default: "default"
@@ -40,10 +40,9 @@ const budgetSchema = new mongoose.Schema(
       default: 0
     },
 
-    // ✅ Used only when rule = "custom"
     customSplits: {
       type: Map,
-      of: Number, // allows dynamic keys like { Rent: 20, Food: 15 }
+      of: Number, 
       default: {}
     },
 
@@ -54,7 +53,6 @@ const budgetSchema = new mongoose.Schema(
       total: { type: Number, default: 0 }
     },
 
-    // ✅ Dynamic + Default categories
     categories: {
       type: [categorySchema],
       default: [

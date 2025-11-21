@@ -85,7 +85,6 @@ const DEFAULT_CATEGORIES = [
   { key: "investments", name: "Investments", pct: 6 },
 ];
 
-// ===== API Helpers =====
 async function getCurrentUser() {
   try {
     const res = await fetch(`${getEnv("VITE_API_URL")}/users/me`, { credentials: "include" });
@@ -129,7 +128,6 @@ async function fetchBudgetFromBackend(month, year) {
   }
 }
 
-// ===== Main Component =====
 export default function BudgetOnboardingSinglePage() {
   const navigate = useNavigate();
 
@@ -142,11 +140,8 @@ export default function BudgetOnboardingSinglePage() {
 
   const [planName, setPlanName] = useState("");
   const [totalBudget, setTotalBudget] = useState(24000);
-  const [customCategories, setCustomCategories] = useState([
-    { id: Date.now(), name: "Rent", limit: 15000 },
-    { id: Date.now() + 1, name: "Groceries", limit: 6000 },
-    { id: Date.now() + 2, name: "Utilities", limit: 3000 },
-  ]);
+ const [customCategories, setCustomCategories] = useState([]);
+
 
   useEffect(() => {
     async function init() {
@@ -167,7 +162,6 @@ export default function BudgetOnboardingSinglePage() {
     init();
   }, []);
 
-  // auto-load default categories when selecting recommended rule
   useEffect(() => {
     if (rule === "50-30-20") {
       setCategories(DEFAULT_CATEGORIES);
@@ -256,7 +250,7 @@ export default function BudgetOnboardingSinglePage() {
         }));
 
         setIncome(inc);
-        setCategories([...DEFAULT_CATEGORIES, ...newCats]);
+        setCategories(newCats);
         setCustomSplits(deriveSplitsFromCustom(inc, customCategories));
         setRule("custom");
         return setActiveStep(4);
@@ -266,13 +260,13 @@ export default function BudgetOnboardingSinglePage() {
     if (activeStep === 4) {
       const today = new Date();
 
-      // ✅ Calculate amount for each category before saving
+      //  Calculate amount for each category before saving
       const categoriesWithAmount = categories.map((c) => ({
         ...c,
         amount: Math.round(((Number(c.pct) || 0) / 100) * Number(income || 0)),
       }));
 
-      // ✅ Optional: calculate total
+      //  Optional: calculate total
       const totalAmount = categoriesWithAmount.reduce((sum, c) => sum + c.amount, 0);
 
       const payload = {
@@ -312,7 +306,6 @@ export default function BudgetOnboardingSinglePage() {
     </div>
   );
 
-  // ---------- JSX ----------
   return (
     <div className={`${SECTION_BG} min-h-screen w-full py-8 px-4 md:px-8`}>
       <div className="mx-auto max-w-6xl space-y-10">
