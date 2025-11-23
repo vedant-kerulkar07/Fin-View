@@ -36,6 +36,83 @@ export const saveBudget = async (req, res, next) => {
 };
 
 
+export const addExpense = async (req, res, next) => {
+  try {
+    const { category, amount, date, title } = req.body;
+
+    if (!category || !amount || !date) {
+      return next(handleError(400, "Category, amount, and date are required"));
+    }
+
+    // Ensure user has a budget
+    let budget = await Budget.findOne({ user: req.user._id });
+
+    if (!budget) {
+      budget = await Budget.create({
+        user: req.user._id,
+        income: 0,
+        totals: { needs: 0, wants: 0, savings: 0 }
+      });
+    }
+
+    // Normalize category input
+    const normalized = category.trim().toLowerCase();
+
+    // Check if category exists
+    let cat = budget.categories.find(
+      (c) => c.name.toLowerCase() === normalized
+    );
+
+    // If not exists → CREATE NEW CATEGORY
+    if (!cat) {
+      const newCategory = {
+        key: normalized.replace(/\s+/g, "-"),
+        name: category,
+        pct: 0,
+        amount: 0,
+        type: "custom",
+        expenses: [],
+      };
+
+      budget.categories.push(newCategory);
+      cat = budget.categories[budget.categories.length - 1];
+    }
+
+    // Add expense
+    cat.expenses.push({
+      title: title || "Expense",
+      amount,
+      date,
+    });
+
+    // Update category total
+    cat.amount += Number(amount);
+
+    // Update totals (only if category is needs/wants/savings)
+    const key = cat.key.toLowerCase();
+
+    if (key === "needs") budget.totals.needs += Number(amount);
+    else if (key === "wants") budget.totals.wants += Number(amount);
+    else if (key === "savings") budget.totals.savings += Number(amount);
+
+    budget.totals.total =
+      budget.totals.needs + budget.totals.wants + budget.totals.savings;
+
+    await budget.save();
+
+    res.json({
+      success: true,
+      message: "Expense added successfully",
+      budget,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
 // ✅ Get logged-in user's budget for a given month/year
 export const getMyBudget = async (req, res , next) => {
   try {

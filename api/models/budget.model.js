@@ -22,7 +22,15 @@ const categorySchema = new mongoose.Schema({
     type: String,
     enum: ["default", "custom"],
     default: "default"
+  },
+  expenses: [
+  {
+    title: String,
+    amount: Number,
+    date: Date
   }
+]
+
 });
 
 // ===== Budget Schema =====

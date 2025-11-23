@@ -15,6 +15,7 @@ import {
   Cell,
 } from "recharts";
 import { getEnv } from "@/helpers/getEnv";
+import AddExpense from "@/components/AddExpense";
 
 // ✅ Reusable function to fetch budget from backend
 async function fetchBudgetFromBackend(month, year) {
@@ -61,10 +62,6 @@ const Dashboard = () => {
     if (user) fetchBudget();
   }, [user]);
 
-  const handleAddExpense = () => {
-    window.location.href = "/AccountSetup";
-  };
-
   // ====== Loading & Error States ======
   if (loading)
     return (
@@ -105,9 +102,13 @@ const Dashboard = () => {
   ];
 
   const categoryData = (budget.categories || []).map((cat) => ({
-    name: cat.name,
-    value: ((cat.pct || 0) / 100) * (budget.income || 0),
-  }));
+  name: cat.name,
+  value:
+    cat.type === "custom"
+      ? cat.amount || 0
+      : ((cat.pct || 0) / 100) * (budget.income || 0),
+}));
+
 
   const barData = Array.from({ length: 12 }, (_, i) => {
     const month = new Date(0, i).toLocaleString("default", { month: "short" });
@@ -130,11 +131,8 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-white">
             Welcome, {user?.name || budget?.user?.name || "User"}!
           </h1>
-          <Button
-            onClick={handleAddExpense}
-            className="bg-[#3AAFA9] hover:bg-[#2f9e95] text-black font-semibold"
-          >
-            + Add Expense
+          <Button>
+            <AddExpense />
           </Button>
         </div>
 
