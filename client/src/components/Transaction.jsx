@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { getEnv } from "@/helpers/getEnv";
 import { UploadCloud } from "lucide-react";
+import { showToast } from "@/helpers/showToast";
 
 const TransactionsPage = () => {
     const [file, setFile] = useState(null);
@@ -29,11 +30,9 @@ const TransactionsPage = () => {
             });
 
             const data = await res.json();
-            console.log("Uploaded:", data);
-            alert("Uploaded Successfully!");
+             showToast("success", data.message);
         } catch (err) {
-            console.error(err);
-            alert("Upload failed");
+             showToast("Error", err.message);
         } finally {
             setLoading(false);
         }
@@ -66,7 +65,7 @@ const TransactionsPage = () => {
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={handleDrop}
                             className="w-full h-64 border-2 border-dashed border-slate-600 rounded-2xl flex flex-col items-center justify-center
-                 hover:border-teal-400 transition cursor-pointer bg-slate-800"
+                                        hover:border-teal-400 transition cursor-pointer bg-slate-800"
                         >
                             <UploadCloud className="h-14 w-14 text-gray-300 mb-3" />
 
