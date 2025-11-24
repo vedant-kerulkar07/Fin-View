@@ -6,76 +6,106 @@ import {
     CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { getEnv } from "@/helpers/getEnv";
+import { UploadCloud } from "lucide-react";
 
 const TransactionsPage = () => {
     const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleUpload = async () => {
-        if (!file) return alert("Please select a CSV file");
+        if (!file) return alert("Please select a file");
 
         const formData = new FormData();
         formData.append("file", file);
 
         try {
+            setLoading(true);
+
             const res = await fetch(`${getEnv("VITE_API_URL")}/transactions/upload-csv`, {
                 method: "POST",
-                credentials: "include", 
+                credentials: "include",
                 body: formData,
             });
 
             const data = await res.json();
             console.log("Uploaded:", data);
-
-            alert("CSV Uploaded Successfully!");
+            alert("Uploaded Successfully!");
         } catch (err) {
             console.error(err);
             alert("Upload failed");
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setFile(e.dataTransfer.files[0]);
     };
 
     return (
         <div className="min-h-screen bg-slate-900 text-white p-10">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-3xl mx-auto space-y-10">
 
-                {/* Upload Card */}
-                <Card className="bg-slate-800 border-slate-700">
+                {/* Upload Section */}
+                <Card className="bg-slate-800 border-slate-700 shadow-xl py-4">
                     <CardHeader>
-                        <CardTitle>Upload Transactions</CardTitle>
+                        <CardTitle className="text-2xl font-semibold text-white">
+                            Upload Transactions
+                        </CardTitle>
+                        <p className="text-sm text-gray-400">
+                            Drag & drop your bank statement in <span className="font-semibold">.csv</span> file here.
+                            Ensure that the file contains date, merchant and amount.
+                        </p>
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-sm text-gray-400 mb-4">
-                            Upload your bank statement in <strong>.csv</strong> format.
-                        </p>
+                        {/* Drag & Drop Box */}
+                        <div
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={handleDrop}
+                            className="w-full h-64 border-2 border-dashed border-slate-600 rounded-2xl flex flex-col items-center justify-center
+                 hover:border-teal-400 transition cursor-pointer bg-slate-800"
+                        >
+                            <UploadCloud className="h-14 w-14 text-gray-300 mb-3" />
 
-                        <Input
-                            type="file"
-                            accept=".csv"
-                            onChange={(e) => setFile(e.target.files[0])}
-                            className="bg-slate-700 border-slate-600 text-white"
-                        />
+                            <p className="text-lg font-medium text-gray-300">
+                                Drag & Drop or .CSV Files
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Supported formats: <span className="font-medium">.csv, .pdf</span>
+                            </p>
+
+                            <Button className="mt-6 bg-teal-500 hover:bg-teal-600 text-black font-semibold"
+                                onClick={() => document.getElementById("fileInput").click()}
+                            >
+                                Browse Files
+                            </Button>
+
+                            <input
+                                id="fileInput"
+                                type="file"
+                                accept=".csv, .pdf"
+                                className="hidden"
+                                onChange={(e) => setFile(e.target.files[0])}
+                            />
+                        </div>
+
+                        {/* Upload Button */}
+                        {file && (
+                            <div className="mt-4 text-sm text-gray-300">
+                                Selected File: <span className="text-teal-400">{file.name}</span>
+                            </div>
+                        )}
 
                         <Button
-                            className="mt-4 w-full"
+                            className="w-full mt-5 bg-teal-500 hover:bg-teal-600 text-black font-semibold"
                             onClick={handleUpload}
+                            disabled={loading}
                         >
-                            Upload CSV
+                            {loading ? "Uploading..." : "Upload File"}
                         </Button>
-                    </CardContent>
-                </Card>
-
-                {/* Example Display Card */}
-                <Card className="mt-6 bg-slate-800 border-slate-700">
-                    <CardHeader>
-                        <CardTitle>Recent Transactions</CardTitle>
-                    </CardHeader>
-
-                    <CardContent>
-                        <div className="text-sm text-gray-300">
-                            Example: Show data after fetching from DB here.
-                        </div>
                     </CardContent>
                 </Card>
             </div>

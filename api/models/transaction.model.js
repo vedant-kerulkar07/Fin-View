@@ -1,42 +1,41 @@
 import mongoose from "mongoose";
 
+const singleTransactionSchema = new mongoose.Schema({
+  date: { type: Date, required: true },
+  category: { type: String, required: true },
+  amount: { type: Number, required: true },
+  type: {
+    type: String,
+    enum: ["income", "expense"],
+    required: true,
+  },
+});
+
 const csvTransactionSchema = new mongoose.Schema(
   {
-    date: {
-      type: Date,
+    uploadedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
+      index: true,            // 🔥 faster user-wise queries
     },
 
     title: {
       type: String,
-      default: function () {
-        return `${this.category} Transaction`;
-      },
+      default: "CSV Uploaded Transactions",
     },
 
-    category: {
-      type: String,
-      required: true,     // REQUIRED NOW
-    },
-
-    amount: {
-      type: Number,
+    transactions: {
+      type: [singleTransactionSchema], // ARRAY OF ALL ROWS
+      default: [],
       required: true,
-    },
-
-    type: {
-      type: String,
-      enum: ["income", "expense"],
-      required: true,
-    },
-
-    uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
     },
   },
   { timestamps: true }
 );
+
+// 🔥 Create index so fetch by user is fast
+csvTransactionSchema.index({ uploadedBy: 1, createdAt: -1 });
 
 const CsvTransaction = mongoose.model("CsvTransaction", csvTransactionSchema);
 export default CsvTransaction;
