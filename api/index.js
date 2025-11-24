@@ -6,6 +6,7 @@ import mongoose from "mongoose"
 import AuthRoute from "./routes/Auth.route.js"
 import UserRoute from "./routes/User.route.js"
 import budgetRoutes from "./routes/budget.routes.js"
+import csvRoute from "./routes/Transaction.route.js"
 
 
 dotenv.config()
@@ -24,6 +25,7 @@ app.use(cors({
 app.use('/api/auth', AuthRoute);
 app.use("/api/users", UserRoute);
 app.use("/api/budget", budgetRoutes);
+app.use("/api/transactions", csvRoute);
 
 mongoose.connect(process.env.MONGO_URI, { dbName: "Fine-View" })
   .then(() => console.log("✅ Database connected"))
