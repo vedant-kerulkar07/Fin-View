@@ -7,6 +7,7 @@ import AuthRoute from "./routes/Auth.route.js"
 import UserRoute from "./routes/User.route.js"
 import budgetRoutes from "./routes/budget.routes.js"
 import csvRoute from "./routes/Transaction.route.js"
+import locationRoute from "./routes/Location.route.js"
 
 
 dotenv.config()
@@ -26,6 +27,7 @@ app.use('/api/auth', AuthRoute);
 app.use("/api/users", UserRoute);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/transactions", csvRoute);
+app.use("/api/location", locationRoute);
 
 mongoose.connect(process.env.MONGO_URI, { dbName: "Fine-View" })
   .then(() => console.log("✅ Database connected"))

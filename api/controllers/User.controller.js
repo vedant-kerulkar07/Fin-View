@@ -1,4 +1,3 @@
-import bcryptjs from "bcryptjs";
 import { handleError } from "../helpers/handleError.js";
 import User from "../models/user.model.js";
 
