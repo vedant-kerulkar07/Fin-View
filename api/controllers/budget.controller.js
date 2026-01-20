@@ -1,41 +1,50 @@
 import { handleError } from "../helpers/handleError.js";
 import Budget from "../models/budget.model.js"
 
-// ✅ Save a new budget (or update if same month/year exists)
+//  Save a new budget (or update if same month/year exists)
 export const saveBudget = async (req, res, next) => {
   try {
-    const { income, rule, customSplits, totals, categories, title, period } = req.body;
+    const { income, customSplits, totals, categories, title, period } = req.body;
 
-    if (!period || !period.month || !period.year) {
+    if (!period?.month || !period?.year) {
       return next(handleError(400, "Month and year are required"));
     }
 
-    // Check existing budget first
-    let budget = await Budget.findOne({
-      user: req.user._id,
-      "period.month": period.month,
-      "period.year": period.year,
-    });
-
-    const previousCategories = budget?.categories || [];
-
-    // Upsert the budget
-    budget = await Budget.findOneAndUpdate(
-      { user: req.user._id, "period.month": period.month, "period.year": period.year },
-      { income, rule, customSplits, totals, categories, title, period, user: req.user._id },
-      { new: true, upsert: true }
+    const budget = await Budget.findOneAndUpdate(
+      {
+        user: req.user._id,
+        "period.month": period.month,
+        "period.year": period.year,
+      },
+      {
+        $set: {
+          income,
+          customSplits,
+          totals,
+          categories,
+          title,
+          period,
+          user: req.user._id,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      }
     );
 
-    // Determine newly added categories
-    const newCategories = categories?.filter(cat => !previousCategories.includes(cat)) || [];
-
-    res.json({ success: true, budget, newCategories });
+    res.status(200).json({
+      success: true,
+      message: "Budget saved successfully",
+      budget,
+    });
   } catch (err) {
-    return next(handleError(400, "Data not found"));
+    next(err); // no 11000 expected anymore
   }
 };
 
-
+//  Add expense to a category
 export const addExpense = async (req, res, next) => {
   try {
     const { category, amount, date, title } = req.body;
@@ -110,35 +119,36 @@ export const addExpense = async (req, res, next) => {
   }
 };
 
-
-
-
-// ✅ Get logged-in user's budget for a given month/year
-export const getMyBudget = async (req, res , next) => {
+// Get logged-in user's budget for a given month/year
+export const getMyBudget = async (req, res, next) => {
   try {
-    const { month, year } = req.query;
+    const month = Number(req.query.month);
+    const year = Number(req.query.year);
 
     if (!month || !year) {
-      return next(handleError(400, "Month and year are required" ));
+      return next(handleError(400, "Valid month and year are required"));
     }
 
     const budget = await Budget.findOne({
       user: req.user._id,
-      "period.month": Number(month),
-      "period.year": Number(year)
+      "period.month": month,
+      "period.year": year,
+    }).lean();
+
+    //  Correct: return null instead of error
+    return res.status(200).json({
+      success: true,
+      budget: budget || null,
     });
 
-    if (!budget) {
-      return next(handleError(400, "Budget not found" ));
-    }
-
-    res.json({ success: true, budget });
   } catch (err) {
-    return next(handleError(400,"Data not found"))
+    next(err);
   }
 };
 
-// ✅ Get all budgets for logged-in user
+
+
+//  Get all budgets for logged-in user
 export const getAllBudgets = async (req, res , next) => {
   try {
     const budgets = await Budget.find({ user: req.user._id }).sort({

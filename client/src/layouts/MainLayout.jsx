@@ -1,4 +1,4 @@
-import Chatbot from "@/components/Chatbot";
+import ChatBot from "@/components/Chatbot";
 import Topbar from "@/components/Topbar";
 import React from "react";
 import { Outlet } from "react-router-dom";
@@ -15,7 +15,7 @@ const MainLayout = () => {
           <Outlet />
         </div>
       </main>
-      <Chatbot />
+      <ChatBot />
     </div>
   );
 };
