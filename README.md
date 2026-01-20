@@ -29,7 +29,7 @@ Categorize income (Salary, Freelance, Business, etc.)
 
 View complete income history
 
-➖ Expense Tracking
+<h4>➖ Expense Tracking</h4>
 
 Add expenses with title, category & date
 
@@ -41,23 +41,23 @@ Edit & delete expense records
 
 📊 Bar charts for monthly income vs expenses
 
-🥧 Pie charts for category-wise expenses
+<h4>🥧 Pie charts for category-wise expenses</h4>
 
 Easy-to-understand financial insights
 
-📜 Transaction History
+<h4>📜 Transaction History</h4>
 
 Chronological list of all transactions
 
 Filter by type, date & category
 
-📱 Responsive Design
+<h4>📱 Responsive Design</h4>
 
 Works smoothly on desktop, tablet & mobile
 
 Clean, modern, and user-friendly UI
 
-🔐 Data Security
+<h4>🔐 Data Security</h4>
 
 Password hashing
 
@@ -66,27 +66,27 @@ Protected APIs
 User-isolated financial records
 
 <h2>🛠️ Technologies Used</h2>
-🔹 Frontend
+<h4>🔹 Frontend</h4>
 
 ⚛️ React.js (Functional Components & Hooks)
 
-🎨 CSS / Tailwind CSS
+<h4>🎨 CSS / Tailwind CSS</h4>
 
 📊 Chart libraries for data visualization
 
-🔹 Backend
+<h4>🔹 Backend</h4>
 
 🟢 Node.js
 
 🚀 Express.js (REST APIs)
 
-🔹 Database
+<h4>🔹 Database</h4>
 
 🍃 MongoDB
 
 🧩 Mongoose ODM
 
-🔹 Tools
+<h4>🔹 Tools</h4>
 
 Git & GitHub
 
@@ -94,12 +94,12 @@ VS Code
 
 <h2>✨ Future Improvements</h2>
 
-📍 Budget limit alerts
-🎯 Savings goal tracking
-📄 Export data as PDF / Excel
-🌙 Dark mode support
-💱 Multi-currency support
-🤖 AI-based spending insights
+📍 Budget limit alerts<br>
+🎯 Savings goal tracking<br>
+📄 Export data as PDF / Excel<br>
+🌙 Dark mode support<br>
+💱 Multi-currency support<br>
+🤖 AI-based spending insights<br>
 
 <h2>🎯 Use Cases</h2>
 
@@ -107,3 +107,5 @@ VS Code
 👨‍💼 Professionals tracking income & savings
 🧑‍💻 Freelancers monitoring variable income
 👨‍👩‍👧 Anyone aiming for better financial control
+
+Deployed URL - https://fin-view-n7qb.vercel.app/
