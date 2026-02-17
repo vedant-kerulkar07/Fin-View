@@ -98,5 +98,6 @@ budgetSchema.index(
   { unique: true }
 );
 
+
 const Budget = mongoose.model("Budget", budgetSchema);
 export default Budget;
