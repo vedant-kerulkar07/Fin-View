@@ -69,7 +69,7 @@ export const simpleChat = async (req, res) => {
       }).lean();
 
       systemPrompt = `
-You are Fine-View AI Assistant.
+You are Fin-View AI Assistant.
 Respond professionally and concisely.
 Answer ONLY using the database provided.
 and used relevant emojis while answering the questions
@@ -92,7 +92,7 @@ ${JSON.stringify(transactions)}
       model = "llama-3.3-70b-versatile";
     } else {
       systemPrompt = `
-You are Fine-View AI Assistant.
+You are Fin-View AI Assistant.
 Respond professionally in one or two lines.
 No casual conversation.
       `;
