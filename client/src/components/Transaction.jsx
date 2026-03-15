@@ -30,9 +30,9 @@ const TransactionsPage = () => {
             });
 
             const data = await res.json();
-             showToast("success", data.message);
+            showToast("success", data.message);
         } catch (err) {
-             showToast("Error", err.message);
+            showToast("Error", err.message);
         } finally {
             setLoading(false);
         }
@@ -56,6 +56,10 @@ const TransactionsPage = () => {
                         <p className="text-sm text-gray-400">
                             Drag & drop your bank statement in <span className="font-semibold">.csv</span> file here.
                             Ensure that the file contains date, merchant and amount.
+                        </p>
+
+                        <p className="text-sm text-gray-400">
+                            The CSV file should follow this format: <span className="font-semibold">date, category, amount</span>
                         </p>
                     </CardHeader>
 
