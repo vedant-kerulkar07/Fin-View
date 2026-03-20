@@ -77,3 +77,39 @@ export const getCsvData = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const deleteCsv = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+
+    const csv = await CsvTransaction.findOne({
+      "transactions._id": transactionId,
+      uploadedBy: req.user._id,
+    });
+
+    if (!csv) {
+      return res.status(404).json({
+        success:false,
+        message:"Transaction not found"
+      });
+    }
+
+    csv.transactions = csv.transactions.filter(
+      (tx) => tx._id.toString() !== transactionId
+    );
+
+    await csv.save();
+
+    return res.status(200).json({
+      success:true,
+      message:"Transaction deleted"
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message:"Server error"
+    });
+  }
+};

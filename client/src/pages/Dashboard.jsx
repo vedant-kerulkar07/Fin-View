@@ -16,10 +16,9 @@ import {
 } from "recharts";
 import { getEnv } from "@/helpers/getEnv";
 import AddExpense from "@/components/AddExpense";
+import { Trash2 } from "lucide-react";
+import { showToast } from "@/helpers/showToast";
 
-// ===============================
-// FETCH BUDGET
-// ===============================
 async function fetchBudgetFromBackend(month, year) {
   try {
     const res = await fetch(
@@ -45,9 +44,7 @@ const Dashboard = () => {
   const [err, setErr] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
-  // ===============================
-  // FETCH CSV TRANSACTIONS
-  // ===============================
+ 
   const fetchCsvTransactions = async () => {
     try {
       const res = await fetch(
@@ -71,9 +68,26 @@ const Dashboard = () => {
     }
   };
 
-  // ===============================
-  // useEffect → FETCH BUDGET + CSV
-  // ===============================
+  const deleteTransaction = async (id) => {
+    try {
+      const res = await fetch(`${getEnv("VITE_API_URL")}/transactions/delete-csv/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
+
+      if (res.ok) {
+        setTransactions(prev =>
+          prev.filter(tx => tx._id !== id)
+        );
+      }
+      showToast("success", res.message);
+    } catch (error) {
+      console.error("Delete error", error);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
 
@@ -104,9 +118,9 @@ const Dashboard = () => {
     fetchData();
   }, [user]);
 
-  // ===============================
+
   // LOADING / ERROR / NO BUDGET
-  // ===============================
+
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#0f172a] text-gray-300">
@@ -133,9 +147,7 @@ const Dashboard = () => {
       </div>
     );
 
-  // ===============================
   // CHART + CATEGORY DATA
-  // ===============================
   const COLORS = [
     "#4CAF50",
     "#FFC107",
@@ -167,9 +179,8 @@ const Dashboard = () => {
   const totalExpenses =
     (budget.totals?.needs || 0) + (budget.totals?.wants || 0);
 
-  // ===============================
   // RETURN UI
-  // ===============================
+
   return (
     <div className="min-h-screen w-full bg-[#0f172a] text-[#3AAFA9]">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
@@ -296,6 +307,7 @@ const Dashboard = () => {
                     <th>Name</th>
                     <th>Category</th>
                     <th className="text-right">Amount</th>
+                    <th className="text-right">Action</th>
                   </tr>
                 </thead>
 
@@ -333,11 +345,18 @@ const Dashboard = () => {
                         </td>
 
                         <td
-                          className={`text-right ${
-                            tx.type === "expense" ? "text-red-400" : "text-green-400"
-                          }`}
+                          className={`text-right ${tx.type === "expense" ? "text-red-400" : "text-green-400"
+                            }`}
                         >
                           ₹{(tx.amount || 0).toLocaleString()}
+                        </td>
+                        <td className="text-right">
+                          <button
+                            onClick={() => deleteTransaction(tx._id)}
+                            className="text-red-400 hover:text-red-300 transition"
+                          >
+                            <Trash2 size={18} />
+                          </button>
                         </td>
                       </tr>
                     ))

@@ -43,7 +43,7 @@ const GoogleLogin = () => {
       }
 
       // ✅ Save user in Redux
-      dispatch(setUser(data.user));
+      dispatch(setUser(data));
 
      if (data.user.role === "user") {
         navigate("/Success");

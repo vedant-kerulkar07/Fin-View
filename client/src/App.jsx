@@ -15,6 +15,7 @@ import ProfilePage from './pages/Profile'
 import Analytics from './pages/Analytics'
 // import SmartForecasting from './pages/smartforcasting'
 import TransactionsPage from './components/Transaction'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/AccountSetup" element={<BudgetOnboardingSinglePage />} />
       </Route>
 
+      <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="/dashboard/notifications" element={<NotificationsPage />} />
@@ -36,6 +38,7 @@ const App = () => {
         <Route path="/dashboard/analytics" element={<Analytics />} />
         {/* <Route path="/dashboard/smartforecasting" element={<SmartForecasting />} /> */}
         <Route path="/dashboard/transaction" element={<TransactionsPage />} />
+      </Route>
       </Route>
     </Routes>
   )

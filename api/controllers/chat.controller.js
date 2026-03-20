@@ -8,7 +8,7 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-// Normalize question for memory matching
+// Normalize question
 const normalize = (text) =>
   text
     .toLowerCase()
@@ -16,6 +16,7 @@ const normalize = (text) =>
     .replace(/\s+/g, " ")
     .trim();
 
+// Financial detection keywords
 const financialKeywords = [
   "budget",
   "income",
@@ -28,11 +29,33 @@ const financialKeywords = [
   "investment",
   "balance",
   "category",
+  "salary",
+  "finance",
+  "payment",
+  "debt",
+  "loan",
 ];
+
+// Smart memory match
+const findSimilarQuestion = (messages, normalizedMsg) => {
+  return messages.find(
+    (m) =>
+      normalizedMsg.includes(m.normalizedMessage) ||
+      m.normalizedMessage.includes(normalizedMsg)
+  );
+};
 
 export const simpleChat = async (req, res) => {
   try {
     const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        message: "Message required",
+      });
+    }
+
     const userId = req.user._id;
 
     const normalizedMsg = normalize(message);
@@ -44,12 +67,16 @@ export const simpleChat = async (req, res) => {
     let chatDoc = await Chat.findOne({ user: userId });
 
     if (!chatDoc) {
-      chatDoc = new Chat({ user: userId, messages: [] });
+      chatDoc = new Chat({
+        user: userId,
+        messages: [],
+      });
     }
 
-    //  CHECK MEMORY (same question asked before)
-    const existing = chatDoc.messages.find(
-      (m) => m.normalizedMessage === normalizedMsg
+    // SMART MEMORY CHECK
+    const existing = findSimilarQuestion(
+      chatDoc.messages,
+      normalizedMsg
     );
 
     if (existing) {
@@ -60,72 +87,205 @@ export const simpleChat = async (req, res) => {
       });
     }
 
-    //  PREPARE CHAT HISTORY (last 10 messages)
+    // Last 12 messages context
     const historyMessages = chatDoc.messages
-      .slice(-10)
+      .slice(-12)
       .flatMap((m) => [
-        { role: "user", content: m.message },
-        { role: "assistant", content: m.response },
+        {
+          role: "user",
+          content: m.message,
+        },
+        {
+          role: "assistant",
+          content: m.response,
+        },
       ]);
 
     let systemPrompt = "";
-    let model = "llama-3.3-70b-versatile";
+
+    const model = "llama-3.3-70b-versatile";
 
     if (isFinancial) {
-      const user = await User.findById(userId).select("-password");
+      const user = await User.findById(userId)
+        .select("-password")
+        .lean();
 
-      const budgets = await Budget.find({ user: userId }).lean();
-
-      const transactions = await CsvTransaction.find({
-        uploadedBy: userId,
+      const budgets = await Budget.find({
+        user: userId,
       }).lean();
 
+      const transactions =
+        await CsvTransaction.find({
+          uploadedBy: userId,
+        }).lean();
+
       systemPrompt = `
+
 You are Fin-View AI Assistant.
+A professional fintech financial analysis assistant.
 
-Respond professionally and concisely.
-Use relevant emojis while answering.
+PRIMARY GOAL:
+Give useful financial insights from database data.
 
-Rules:
-- Answer ONLY using the database provided.
-- No casual language.
-- Keep answers short and clear.
-- If data is not found say: "No data available."
+COMMUNICATION STYLE:
 
-User:
+- Professional
+- Clear
+- Structured
+- Practical
+- Insight driven
+
+EMOJI RULES:
+
+You MUST include 2–5 relevant emojis.
+
+Use mainly:
+📊 analysis
+💰 money
+📉 expenses
+📈 income
+⚠️ risk
+✅ good
+💡 advice
+
+Never respond with zero emojis.
+
+RESPONSE LENGTH:
+
+Simple question:
+3–5 lines
+
+Analysis:
+Structured medium answer
+
+Advice:
+Bullet points
+
+Never:
+• One line answers
+• Huge paragraphs
+
+FORMATTING:
+
+Use sections like:
+
+📊 Financial Summary
+
+💰 Income: ₹X
+📉 Expenses: ₹X
+💵 Savings: ₹X
+
+Use bullets for breakdowns.
+
+IDENTITY RULES:
+
+If user asks:
+- their name
+- profile info
+
+Use User data.
+
+DATABASE RULES:
+
+Use ONLY provided data.
+
+Never guess numbers.
+
+If missing:
+"No data available."
+
+CONVERSATION RULES:
+
+If follow up question appears,
+use conversation history.
+
+If question unclear,
+answer based on context.
+
+USER DATA:
+
 ${JSON.stringify(user)}
 
-Budgets:
+BUDGET DATA:
+
 ${JSON.stringify(budgets)}
 
-Transactions:
+TRANSACTION DATA:
+
 ${JSON.stringify(transactions)}
-      `;
+
+`;
     } else {
+      const user = await User.findById(userId)
+        .select("-password")
+        .lean();
+
       systemPrompt = `
+
 You are Fin-View AI Assistant.
 
-Respond professionally in one or two lines.
-Keep answers short and precise.
-No casual conversation.
-      `;
+Professional fintech assistant.
+
+RULES:
+
+Respond based on complexity.
+
+Simple:
+3 lines.
+
+Complex:
+Structured answer.
+
+Never:
+One line answers.
+
+Use 1–2 emojis when helpful.
+
+If user asks identity:
+
+User data:
+
+${JSON.stringify(user)}
+
+Answer from it.
+
+Be clear and helpful.
+
+`;
     }
 
-    //  CALL GROQ WITH MEMORY
-    const completion = await groq.chat.completions.create({
-      model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        ...historyMessages,
-        { role: "user", content: message },
-      ],
-      temperature: 0.2,
-      max_tokens: 150,
-    });
+    // AI CALL
+    const completion =
+      await groq.chat.completions.create({
+        model: model,
 
-    const answer = completion.choices[0].message.content.trim();
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
 
-    //  SAVE MESSAGE TO MEMORY
+          ...historyMessages,
+
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+
+        temperature: 0.3,
+
+        max_tokens: 400,
+
+        presence_penalty: 0.2,
+
+        frequency_penalty: 0.1,
+      });
+
+    const answer =
+      completion.choices[0].message.content.trim();
+
+    // SAVE MEMORY
     chatDoc.messages.push({
       message,
       normalizedMessage: normalizedMsg,
@@ -150,16 +310,21 @@ No casual conversation.
   }
 };
 
-//  GET CHAT HISTORY
+// GET CHAT HISTORY
+
 export const getChatHistory = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const chatDoc = await Chat.findOne({ user: userId }).lean();
+    const chatDoc = await Chat.findOne({
+      user: userId,
+    }).lean();
 
     res.json({
       success: true,
-      chats: chatDoc ? chatDoc.messages : [],
+      chats: chatDoc
+        ? chatDoc.messages
+        : [],
     });
   } catch (error) {
     res.status(500).json({

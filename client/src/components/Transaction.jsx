@@ -62,7 +62,6 @@ const TransactionsPage = () => {
                             The CSV file should follow this format: <span className="font-semibold">date, category, amount</span>
                         </p>
                     </CardHeader>
-                    
 
                     <CardContent>
                         {/* Drag & Drop Box */}
