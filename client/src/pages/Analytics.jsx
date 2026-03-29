@@ -90,15 +90,10 @@ const Analytics = () => {
   const categoryData =
     categories?.map((cat) => ({
       name: cat.name,
-      planned: cat.planned || 0,
-      actual: cat.actual || 0,
+      income:budget?.income || 0,
+      actual: cat.amount || 0,
       value: cat.amount || ((cat.pct || 0) / 100) * (budget.income || 0) || 0,
     })) || [];
-
-  const monthlyData = Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(0, i).toLocaleString("default", { month: "short" }),
-    spend: Math.floor(Math.random() * 40000) + 10000,
-  }));
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-white p-4 sm:p-6 overflow-hidden">
@@ -168,7 +163,7 @@ const Analytics = () => {
                     <p className="text-green-400 text-sm sm:text-base">{leftText}</p>
                   </div>
                   <p className="text-sm text-gray-400 mt-1">
-                    Planned: ₹{cat.value?.toLocaleString()} | Actual: ₹{cat.income?.toLocaleString()}
+                    Planned: ₹{cat.value?.toLocaleString()}
                   </p>
 
                   {/* Progress Bar */}
@@ -180,7 +175,7 @@ const Analytics = () => {
                   </div>
 
                   <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>₹0</span>
+                    <span>₹{cat.value?.toLocaleString()}</span>
                     <span>₹{income?.toLocaleString()}</span>
                   </div>
                 </CardContent>
@@ -230,26 +225,82 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* ==== Monthly Spends Chart ==== */}
+      {/* ==== Budget Performance Chart ==== */}
       <div className="bg-[#1E293B] rounded-2xl p-5">
-        <h3 className="text-lg font-medium mb-3">Monthly Spends</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={monthlyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis dataKey="month" stroke="#CBD5E1" />
-            <YAxis stroke="#CBD5E1" />
-            <Tooltip />
-            <Line type="monotone" dataKey="spend" stroke="#3B82F6" strokeWidth={2} dot={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+        <div className="flex justify-between items-center mb-4">
 
-      {/* <div className="flex justify-end mt-6">
-        <Button className="bg-[#2563EB] hover:bg-[#1D4ED8] px-8 py-2 text-white"
-          onClick={()=>navigate("/dashboard/smartforecasting")}>
-          Next
-        </Button>
-      </div> */}
+          <h3 className="text-lg font-medium">
+            Budget Performance
+          </h3>
+
+          <span className="text-sm text-gray-400">
+            Planned vs Actual
+          </span>
+        </div>
+
+        <ResponsiveContainer width="100%" height={260}>
+
+          <LineChart data={categoryData}>
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#334155"
+            />
+
+            <XAxis
+              dataKey="name"
+              stroke="#CBD5E1"
+            />
+
+            <YAxis stroke="#CBD5E1" />
+
+            <Tooltip
+              contentStyle={{
+                background: "#0F172A",
+                border: "none",
+                borderRadius: "8px"
+              }}
+            />
+
+            <Line
+              type="monotone"
+              dataKey="income"
+              stroke="#10B981"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              name="Income"
+            />
+
+            <Line
+              type="monotone"
+              dataKey="actual"
+              stroke="#EF4444"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              name="Actual"
+            />
+
+          </LineChart>
+
+        </ResponsiveContainer>
+
+        {/* Insight text */}
+
+        <div className="mt-4 text-sm">
+
+          {categoryData.some(c => c.income > c.planned)
+              ?
+              <p className="text-red-400">
+                ⚠ Some categories exceeded their budget
+              </p>
+              :
+              <p className="text-green-400">
+                ✅ All categories are within budget
+              </p>
+          }
+        </div>
+
+      </div>
     </div>
   );
 };
