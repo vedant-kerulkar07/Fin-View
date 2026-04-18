@@ -20,8 +20,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 const App = () => {
   return (
     <Routes>
-       <Route element={<AuthLayout />}>
-       <Route path="/" element={<SignIn />} />
+      <Route element={<AuthLayout />}>
+        <Route path="/" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password-success" element={<ResetPasswordSuccess />} />
@@ -31,14 +31,14 @@ const App = () => {
       </Route>
 
       <Route element={<ProtectedRoute />}>
-      <Route path="/dashboard" element={<MainLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="/dashboard/notifications" element={<NotificationsPage />} />
-        <Route path="/dashboard/profile" element={<ProfilePage />} />
-        <Route path="/dashboard/analytics" element={<Analytics />} />
-        {/* <Route path="/dashboard/smartforecasting" element={<SmartForecasting />} /> */}
-        <Route path="/dashboard/transaction" element={<TransactionsPage />} />
-      </Route>
+        <Route path="/dashboard" element={<MainLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/dashboard/notifications" element={<NotificationsPage />} />
+          <Route path="/dashboard/profile" element={<ProfilePage />} />
+          <Route path="/dashboard/analytics" element={<Analytics />} />
+          {/* <Route path="/dashboard/smartforecasting" element={<SmartForecasting />} /> */}
+          <Route path="/dashboard/transaction" element={<TransactionsPage />} />
+        </Route>
       </Route>
     </Routes>
   )
