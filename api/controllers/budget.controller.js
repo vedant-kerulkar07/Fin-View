@@ -54,7 +54,12 @@ export const addExpense = async (req, res, next) => {
     }
 
     // Ensure user has a budget
-    let budget = await Budget.findOne({ user: req.user._id });
+    // let budget = await Budget.findOne({ user: req.user._id });
+    let budget = await Budget.findOne({
+      user: req.user._id,
+      "period.month": req.body.month,
+      "period.year": req.body.year,
+    });
 
     if (!budget) {
       budget = await Budget.create({
@@ -149,7 +154,7 @@ export const getMyBudget = async (req, res, next) => {
 
 
 //  Get all budgets for logged-in user
-export const getAllBudgets = async (req, res , next) => {
+export const getAllBudgets = async (req, res, next) => {
   try {
     const budgets = await Budget.find({ user: req.user._id }).sort({
       "period.year": -1,
@@ -158,6 +163,6 @@ export const getAllBudgets = async (req, res , next) => {
 
     res.json({ success: true, budgets });
   } catch (err) {
-    return next(handleError(400,"Budget not found"))
+    return next(handleError(400, "Budget not found"))
   }
 };
